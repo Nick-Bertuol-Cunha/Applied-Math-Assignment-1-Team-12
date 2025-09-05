@@ -112,7 +112,7 @@ syms x
     func = symfun(fun,x)
     funcDeriv = diff(func,x);
     xi=x0;
-        while abs(func(xi))>=0.000000001
+        while absArra(func(xi))>=0.000000001
             xi=xi-func(xi)./funcDeriv(xi)
         end 
 end
