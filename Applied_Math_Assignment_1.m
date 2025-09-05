@@ -13,12 +13,17 @@ yline(0, '--k', 'LineWidth', 1);
 
 % Function calls
 
-%bisection()
-%newton()
+bisection()
+newton()
 secant()
-%bisection_solver(test_func01,20,40);
-%newton_solver(test_func01, 30);
+bisection_solver(test_func01,20,40);
+newton_solver(@my_test_funct, 30);
 secant_solver(test_func01, 30,40);
+
+function [fout, dfdxout] = my_test_funct(x)
+  fout = (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
+  dfdxout = 3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6;
+end
 
 function bisection
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
@@ -47,7 +52,7 @@ function bisection
             end
         end
     end
-        x = interval(1,1)
+        x = interval(1,1);
 end
 
 function newton
@@ -57,7 +62,6 @@ function newton
         while abs(test_func01(x))>=0.000000001
             x=x-test_func01(x)/test_derivative01(x);
         end
-        x
 end
 
 function secant
@@ -71,7 +75,7 @@ function secant
         x0=x1;
         x1=x2;
     end
-    x = x2
+    x = x2;
 end
 
 %generalized bisection function
@@ -83,7 +87,7 @@ function x = bisection_solver(func,x_left,x_right)
     
     fc = func(c);
 
-    while abs(fc) > 0.000001
+    while abs(fc) > 1e-7
         c = (interval(1,1)+interval(1,2))/2;
         fa = func(interval(1,1));
         fb = func(interval(1,2));
@@ -102,37 +106,33 @@ function x = bisection_solver(func,x_left,x_right)
             end
         end
     end
-       x = interval(1,1)
+       x = interval(1,1);
 end
 
 %generalized newton function
-function x_root = newton_solver(f_in,x0)
+function x = newton_solver(f_in,x0)
 
     x_val = x0;
     [f_val, dfdx_val] = f_in(x_val);
+    x_prev=x0+1;
 
-    count = 0;
-    while abs(dfdx_val) > 1e-7 && abs(x_val-x_prev) > dx
+    while abs(dfdx_val) > 1e-14 && abs(x_val-x_prev)>0
         x_prev = x_val;
         x_val = x_val - f_val/dfdx_val;
-
         [f_val, dfdx_val] = f_in(x_val);
-        count = count + 1;
     end
-    x_root = x_val;
-
-    %assume we succeed
+    x = x_val;
 end
 
 %generalized secant function
 function x = secant_solver(fun,x0,x1)
     test_func01 = fun;
-    while abs(test_func01(x1)) >= 0.00000001
+    while abs(test_func01(x1)) >= 1e-14
         fx0 = test_func01(x0);
         fx1 = test_func01(x1);
         x2 = (x0 * fx1 - x1 * fx0) / (fx1 - fx0);
         x0 = x1;
         x1 = x2;
     end
-    x = x2
+    x = x2;
 end
