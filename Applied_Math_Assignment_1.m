@@ -13,12 +13,12 @@ plot(x, fx)
 grid on;
 yline(0, '--k', 'LineWidth', 1);
 
-bisection()
-newton()
-secant()
+%bisection()
+%newton()
+%secant()
 bisection_solver(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6),20,40)
-newton_solver((x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6),30)
-secant_solver(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6), 1,3)
+newton_solver(@orion_test_func,30)
+secant_solver(@orion_test_func, 1,3)
 function bisection
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
     interval = [20,40];
@@ -51,7 +51,7 @@ function bisection
         
 end
 
-function newton
+function newton()
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
     test_derivative01 = @(x) 3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6;
     x=30;
@@ -60,7 +60,7 @@ function newton
         end 
 end
 
-function secant
+function secant()
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
     x0=1;
     x1=3;
@@ -108,13 +108,12 @@ end
 
 %generalized newton function
 function x = newton_solver(fun,x0)
-syms x 
-    func = symfun(fun,x)
-    funcDeriv = diff(func,x);
     xi=x0;
-        while abs(func(xi))>=0.000000001
-            xi=xi-func(xi)./funcDeriv(xi)
-        end 
+    while abs(fun(xi))>=0.000000001
+        [fval,dfdx] = fun(xi);
+        xi=xi-fval./dfdx;
+    end 
+    x = xi;
 end
 
 %generalized secant function
@@ -128,4 +127,14 @@ function x = secant_solver(fun,x0,x1)
         x1 = x2;
     end
     x = x1; 
+end
+
+function [fval,dfdx] = orion_test_func(x)
+    fval =  (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
+    dfdx =  3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6;
+end
+
+function [fval,dfdx] = orion_test_func2(x)
+    fval = x.^2-2;
+    dfdx = 2*x;
 end
