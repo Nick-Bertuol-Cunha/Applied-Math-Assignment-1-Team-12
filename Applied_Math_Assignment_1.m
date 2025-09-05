@@ -5,20 +5,21 @@ test_derivative01 = @(x) 3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6
 
 x = linspace(-15,40,1000);
 
-y = 0;
-
 fx = test_func01(x);
 
 plot(x, fx)
 grid on;
 yline(0, '--k', 'LineWidth', 1);
 
-bisection()
-newton()
+% Function calls
+
+%bisection()
+%newton()
 secant()
-bisection_solver(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6),20,40)
-newton_solver((x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6),30)
-secant_solver(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6), 1,3)
+%bisection_solver(test_func01,20,40);
+%newton_solver(test_func01, 30);
+secant_solver(test_func01, 30,40);
+
 function bisection
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
     interval = [20,40];
@@ -35,20 +36,18 @@ function bisection
 
         if fa * fc < 0
             % f(a) and f(c) have opposite signs
-            interval = [interval(1,1),c]
+            interval = [interval(1,1),c];
         else
             % f(a) and f(c) have same signs
             if fb * fc < 0
                 % f(b) and f(c) have opposite signs
-                interval = [c,interval(1,2)]
+                interval = [c,interval(1,2)];
             else
                 % f(b) and f(c) have same signs
-                
             end
-
         end
     end
-        
+        x = interval(1,1)
 end
 
 function newton
@@ -56,26 +55,28 @@ function newton
     test_derivative01 = @(x) 3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6;
     x=30;
         while abs(test_func01(x))>=0.000000001
-            x=x-test_func01(x)/test_derivative01(x)
-        end 
+            x=x-test_func01(x)/test_derivative01(x);
+        end
+        x
 end
 
 function secant
     test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
-    x0=1;
-    x1=3;
+    x0=30;
+    x1=40;
     while abs(test_func01(x1))>=0.00000001
         fx0=test_func01(x0);
         fx1=test_func01(x1);
-        x2=(x0*fx1-x1*fx0)/(fx1-fx0)
+        x2=(x0*fx1-x1*fx0)/(fx1-fx0);
         x0=x1;
         x1=x2;
     end
+    x = x2
 end
 
 %generalized bisection function
-function x = bisection_solver(fun,x_left,x_right)
-    func = fun;
+function x = bisection_solver(func,x_left,x_right)
+    
     interval = [x_left,x_right];
 
     c = (interval(1,1)+interval(1,2))/2;
@@ -90,31 +91,37 @@ function x = bisection_solver(fun,x_left,x_right)
 
         if fa * fc < 0
             % f(a) and f(c) have opposite signs
-            interval = [interval(1,1),c]
+            interval = [interval(1,1),c];
         else
             % f(a) and f(c) have same signs
             if fb * fc < 0
                 % f(b) and f(c) have opposite signs
-                interval = [c,interval(1,2)]
+                interval = [c,interval(1,2)];
             else
                 % f(b) and f(c) have same signs
-                
             end
-
         end
     end
-        
+       x = interval(1,1)
 end
 
 %generalized newton function
-function x = newton_solver(fun,x0)
-syms x 
-    func = symfun(fun,x)
-    funcDeriv = diff(func,x);
-    xi=x0;
-        while abs(func(xi))>=0.000000001
-            xi=xi-func(xi)./funcDeriv(xi)
-        end 
+function x_root = newton_solver(f_in,x0)
+
+    x_val = x0;
+    [f_val, dfdx_val] = f_in(x_val);
+
+    count = 0;
+    while abs(dfdx_val) > 1e-7 && abs(x_val-x_prev) > dx
+        x_prev = x_val;
+        x_val = x_val - f_val/dfdx_val;
+
+        [f_val, dfdx_val] = f_in(x_val);
+        count = count + 1;
+    end
+    x_root = x_val;
+
+    %assume we succeed
 end
 
 %generalized secant function
@@ -127,5 +134,5 @@ function x = secant_solver(fun,x0,x1)
         x0 = x1;
         x1 = x2;
     end
-    x = x1; 
+    x = x2
 end
