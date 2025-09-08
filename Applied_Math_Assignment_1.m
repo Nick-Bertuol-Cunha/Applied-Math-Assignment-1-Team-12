@@ -9,9 +9,9 @@ y = 0;
 
 fx = test_func01(x);
 
-plot(x, fx)
-grid on;
-yline(0, '--k', 'LineWidth', 1);
+%plot(x, fx)
+%grid on;
+%yline(0, '--k', 'LineWidth', 1);
 
 %bisection()
 %newton()
@@ -154,8 +154,44 @@ function [fval,dfdx] = orion_test_func2(x)
 end
 
 f_record = my_recorder.generate_recorder_fun(@orion_test_func);
-x0 = 29;
+x0 = 5;
 x_root = newton_solver(f_record,x0);
 input_list = my_recorder.get_input_list();
-semilogy(1:length(input_list),abs(input_list-x_root),'ko','markerfacecolor','k');
+%semilogy(1:length(input_list),abs(input_list-x_root),'ko','markerfacecolor','k');
+xn    = input_list(1:end-1);
+xnp1  = input_list(2:end);
+nVals = (1:numel(xn)).';   % iteration index for each pair
 
+num_trials = 100;
+spread     = 2; 
+x0_list    = linspace(x_root - spread, x_root + spread, num_trials);
+
+xn_all = []; xnp1_all = []; n_all = []; trial_id = [];
+
+for t = 1:numel(x0_list)
+    rec = input_recorder();
+    f_rec = rec.generate_recorder_fun(@orion_test_func); 
+    try
+        x_star = newton_solver(f_rec, x0_list(t));        
+    catch
+        continue
+    end
+
+    xs = rec.get_input_list();                          
+    if numel(xs) < 2, continue; end
+
+    xn   = xs(1:end-1).';
+    xnp1 = xs(2:end).';
+    n    = (1:numel(xn)).';
+    xn_all    = [xn_all;    xn];
+    xnp1_all  = [xnp1_all;  xnp1];
+    n_all     = [n_all;     n];
+    trial_id  = [trial_id;  t*ones(numel(n),1)];
+end
+
+fprintf('Collected %d pairs from %d trials (target root ~ %.12g)\n', ...
+    numel(xn_all), numel(unique(trial_id)), x_root);
+
+err_n=abs(xn_all-x_root);
+err_np1=abs(xnp1_all-x_root);
+loglog(err_n,err_np1,'ro','markerfacecolor','r','markersize',1)
