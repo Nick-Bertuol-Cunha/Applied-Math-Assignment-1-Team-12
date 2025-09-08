@@ -152,10 +152,9 @@ function [fval,dfdx] = orion_test_func2(x)
     fval = x.^2-2;
     dfdx = 2*x;
 end
+x_guess = [29,30,31,32,33,34,35,36,37,38];
+f_record = my_recorder.generate_recorder_fun(@newton_solver);
 
-f_record = my_recorder.generate_recorder_fun(@orion_test_func);
-x0 = 29;
-x_root = newton_solver(f_record,x0);
-input_list = my_recorder.get_input_list();
-semilogy(1:length(input_list),abs(input_list-x_root),'ko','markerfacecolor','k');
-
+while i <
+x_root = newton_solver(f_record, x_guess(i));
+end
