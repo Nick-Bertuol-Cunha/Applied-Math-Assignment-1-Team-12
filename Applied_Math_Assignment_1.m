@@ -77,6 +77,7 @@ end
 function x = bisection_solver(fun,x_left,x_right)
     func = fun;
     interval = [x_left,x_right];
+    c_values = [];
 
     c = (interval(1,1)+interval(1,2))/2;
     
@@ -87,46 +88,59 @@ function x = bisection_solver(fun,x_left,x_right)
         fa = func(interval(1,1));
         fb = func(interval(1,2));
         fc = func(c);
+        
+        c_values = [c_values, c]; % Save the current c value
+
+      
+        % disp(interval)
 
         if fa * fc < 0
             % f(a) and f(c) have opposite signs
-            interval = [interval(1,1),c]
+            interval = [interval(1,1),c];
         else
             % f(a) and f(c) have same signs
             if fb * fc < 0
                 % f(b) and f(c) have opposite signs
-                interval = [c,interval(1,2)]
+                interval = [c,interval(1,2)];
             else
                 % f(b) and f(c) have same signs
-                
             end
-
         end
     end
-        
+    x = c;
+    disp('Iterated c values:'); 
+    disp(c_values);
 end
 
 %generalized newton function
 function x = newton_solver(fun,x0)
-    xi=x0;
-    while abs(fun(xi))>=0.000000001
-        [fval,dfdx] = fun(xi);
-        xi=xi-fval./dfdx;
+    xi = x0;
+    xi_values = [];
+    while abs(fun(xi)) >= 0.000000001
+        [fval, dfdx] = fun(xi);
+        xi_values = [xi_values, xi];
+        xi = xi - fval ./ dfdx;
     end 
     x = xi;
+    disp('Iterated xi values:');
+    disp(xi_values);
 end
 
 %generalized secant function
 function x = secant_solver(fun,x0,x1)
     test_func01 = fun;
+    x1_values = [];
     while abs(test_func01(x1)) >= 0.00000001
         fx0 = test_func01(x0);
         fx1 = test_func01(x1);
         x2 = (x0 * fx1 - x1 * fx0) / (fx1 - fx0);
+        x1_values = [x1_values, x1];
         x0 = x1;
         x1 = x2;
     end
     x = x1; 
+    disp('Iterated x1 values:');
+    disp(x1_values);
 end
 
 function [fval,dfdx] = orion_test_func(x)
