@@ -264,9 +264,9 @@ fprintf('Regression: p = %.4f, k = %.6g\n', p, k);
 % if guess_list2 is not needed, then set to zero in input
 %filter_list: a list of constants used to filter the collected data
 
-guess_list_1
+guess_list_1 = [];
 
-convergence_analysis(2,test_func01, 3)
+%convergence_analysis(2,test_func01, 3)
 
 function convergence_analysis(solver_flag, fun, x_guess0, guess_list1, guess_list2, filter_list)
     % Initialize variables
@@ -302,28 +302,39 @@ end
 x_in=linspace(0,50,200);
 [fvalclass, dfdxvalclass]=test_function03(x_in);
 x_guess=27;
-dxtol=1e-14;
-ytol=1e-14;
-dfdxmin=1e-10;
-max_iter=100;
 
 x_root_3=newton_solver(@test_function03, x_guess);
-sucess_list=[];
-fail_list=[];
+newton_success_list=[];
+newton_fail_list=[];
+secant_success_list=[];
+secant_fail_list=[];
 
 for n=1:length(x_in)
     x_guess=x_in(n);
-    root_attempt=newton_solver(@test_function03, x_guess);
-    if abs(x_root_3-root_attempt)<.1
-        sucess_list(end+1)=x_guess;
+    newton_root_attempt=newton_solver(@test_function03, x_guess);
+    %secant_root_attempt=secant_solver(@test_function03, x_guess);
+    if abs(x_root_3-newton_root_attempt)<.1
+        newton_success_list(end+1)=x_guess;
     else
-        fail_list(end+1)=x_guess;
+        newton_fail_list(end+1)=x_guess;
     end
 end
 
+[fsuccess_list,dfdxsuccess]=test_function03(newton_success_list);
+[ffail_list,dfdxfail]=test_function03(newton_fail_list);
+
+figure; hold on;
+plot(x_in, fvalclass, 'k-', 'LineWidth', 1, 'DisplayName','Test Function 3');
+yline(0, '--k', 'LineWidth', 1, 'DisplayName','F(x)=0');
+scatter(newton_success_list, fsuccess_list, 26, 'g', 'filled', 'DisplayName','converges');
+scatter(newton_fail_list, ffail_list, 26, 'r', 'filled', 'DisplayName','fails');
+xlabel('initial guess x_0'); ylabel('f(x_0)');
+title('Newton convergence by initial guess (sigmoid)');
+legend('Location','best');
+
 function [f_val,dfdx] = test_function03(x)
-    global input_list;
-    input_list(:,end+1) = x;
+    %global input_list;
+    %input_list(:,end+1) = x;
     a = 27.3; b = 2; c = 8.3; d = -3;
     H = exp((x-a)/b);
     dH = H/b;
