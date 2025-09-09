@@ -248,3 +248,5 @@ k_theory = abs(0.5 * fpp_fd / fp_fd);
 
 fprintf('Theory:   p = 2, k = %.6g\n', k_theory);
 fprintf('Regression: p = %.4f, k = %.6g\n', p, k);
+
+
