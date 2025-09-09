@@ -264,9 +264,7 @@ fprintf('Regression: p = %.4f, k = %.6g\n', p, k);
 % if guess_list2 is not needed, then set to zero in input
 %filter_list: a list of constants used to filter the collected data
 
-guess_list_1
-
-convergence_analysis(2,test_func01, 3)
+convergence_analysis(2,test_func01, 3, )
 
 function convergence_analysis(solver_flag, fun, x_guess0, guess_list1, guess_list2, filter_list)
     % Initialize variables
