@@ -1,4 +1,6 @@
 my_recorder = input_recorder();
+
+%Day 1
 %Definition of the test function and its derivative
 test_func01 = @(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) -.7 - exp(x/6);
 test_derivative01 = @(x) 3*(x.^2)/100 - 2*x/8 + 2 +(6/2)*cos(x/2+6) - exp(x/6)/6;
@@ -113,18 +115,18 @@ function x = bisection_solver(fun,x_left,x_right)
 end
 
 %generalized newton function
-function x = newton_solver(fun,x0)
-    xi = x0;
-    xi_values = [];
-    while abs(fun(xi)) >= 0.000000001
-        [fval, dfdx] = fun(xi);
-        xi_values = [xi_values, xi];
-        xi = xi - fval ./ dfdx;
-    end 
-    x = xi;
-    %disp('Iterated xi values:');
-    %disp(xi_values);
+function [x, xi_values] = newton_solver(fun, x0)
+    tol = 1e-9; max_iter = 100;
+    x = x0; xi_values = [];
+    for n = 1:max_iter
+        [fval, dfdx] = fun(x);          
+        if ~isfinite(fval) || abs(fval) < tol, break; end
+        if ~isfinite(dfdx) || dfdx == 0,  break; end
+        x = x - fval/dfdx;
+        xi_values(end+1) = x;      
+    end
 end
+
 
 %generalized secant function
 function x = secant_solver(fun,x0,x1)
@@ -153,6 +155,8 @@ function [fval,dfdx] = orion_test_func2(x)
     dfdx = 2*x;
 end
 
+%Day 2
+
 f_record = my_recorder.generate_recorder_fun(@orion_test_func);
 x0 = 5;
 x_root = newton_solver(f_record,x0);
@@ -162,7 +166,7 @@ xn    = input_list(1:end-1);
 xnp1  = input_list(2:end);
 nVals = (1:numel(xn)).';   % iteration index for each pair
 
-num_trials = 100;
+num_trials = 1000;
 spread     = 2; 
 x0_list    = linspace(x_root - spread, x_root + spread, num_trials);
 
@@ -194,4 +198,53 @@ fprintf('Collected %d pairs from %d trials (target root ~ %.12g)\n', ...
 
 err_n=abs(xn_all-x_root);
 err_np1=abs(xnp1_all-x_root);
+figure;
 loglog(err_n,err_np1,'ro','markerfacecolor','r','markersize',1)
+
+x_regression=[];
+y_regression=[];
+for n=1:length(trial_id)
+    if err_n(n)>1e-15 && err_n(n)<1e-2 && ...
+        err_np1(n)>1e-14 && err_np1(n)<1e-2 && ...
+        trial_id(n)>2
+        x_regression(end+1) = err_n(n);
+        y_regression(end+1) = err_np1(n);
+end
+end
+
+figure;
+loglog(x_regression,y_regression,'ro','markerfacecolor','r','markersize',1)
+
+Y = log(y_regression)';
+X1 = log(x_regression)';
+X2 = ones(length(X1),1);
+%run the regression
+coeff_vec = regress(Y,[X1,X2]);
+%pull out the coefficients from the fit
+p = coeff_vec(1);
+k = exp(coeff_vec(2));
+
+xx = logspace(log10(min(x_regression)), log10(max(x_regression)), 200);
+
+yy = k .* xx.^p;
+
+figure;                         
+loglog(xx, yy, '-', 'LineWidth', 2);
+
+function [dfdx,d2fdx2] = approximate_derivative(fun,x)
+    delta_x = 1e-6;
+    f_left = fun(x-delta_x);
+    f_0 = fun(x);
+    f_right = fun(x+delta_x);
+    dfdx = (f_right-f_left)/(2*delta_x);
+    d2fdx2 = (f_right-2*f_0+f_left)/(delta_x*delta_x);
+end
+
+f = test_func01;
+
+[fp_fd, fpp_fd] = approximate_derivative(f, x_root);     % finite differences at the root
+p_theory = 2;
+k_theory = abs(0.5 * fpp_fd / fp_fd);
+
+fprintf('Theory:   p = 2, k = %.6g\n', k_theory);
+fprintf('Regression: p = %.4f, k = %.6g\n', p, k);
