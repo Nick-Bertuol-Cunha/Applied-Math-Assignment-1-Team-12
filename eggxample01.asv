@@ -21,8 +21,17 @@ function eggxample01()
     tan_vec_y = [V_single(2),V_single(2)+vector_scaling*G_single(2)];
     plot(tan_vec_x,tan_vec_y,'g')
 
-    [xmin, xmax, ymin, ymax] = find_bounding_box(x0, y0, theta, egg_params);
-    plot([xmin,xmax,xmax,xmin,xmin],[ymin,ymin,ymax,ymax,ymin])
+
+
+end
+
+%wrapper function that calls egg_func
+%and only returns the x coordinate of the
+%point on the perimeter of the egg
+%(single output)
+function x_out = egg_wrapper1(s,x0,y0,theta,egg_params)
+[V, G] = egg_func(s,x0,y0,theta,egg_params);
+x_out = V(1);
 end
 
 function [xmin, xmax, ymin, ymax] = find_bounding_box(x0, y0, theta, egg_params)
@@ -36,12 +45,9 @@ function [xmin, xmax, ymin, ymax] = find_bounding_box(x0, y0, theta, egg_params)
     y_list=[];
 
     for s_guess = s_guess_list
-        s_rootx=fzero(egg_wrapper_func2_x, s_guess);
-        [V,~]=egg_func(s_rootx, x0, y0, theta, egg_params);
-        x_list(end+1)=V(1);
-        s_rooty=fzero(egg_wrapper_func2_y, s_guess);
-        [V,~]=egg_func(s_rooty, x0, y0, theta, egg_params);
-        y_list(end+1)=V(2);
+        s_rootx=fzero(egg_wrapper_func2_x, s_guess, dxtol, ytol, max_iter, dfdxmin);
+        [V,~]=egg_func(s_rootx)
+        s_rooty=fzero(egg_wrapper_func2_y, s_guess, dxtol, ytol, max_iter, dfdxmin);
     end
     xmin=min(x_list);
     xmax=max(x_list);
