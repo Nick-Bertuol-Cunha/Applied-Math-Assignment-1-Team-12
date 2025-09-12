@@ -68,7 +68,7 @@ function secant()
         x1=x2;
     end
 end
-%% 
+%%
 
 %generalized bisection function
 function x = bisection_solver(fun,x_left,x_right)
