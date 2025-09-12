@@ -256,12 +256,18 @@ fprintf('Regression: p = %.4f, k = %.6g\n', p, k);
 % if guess_list2 is not needed, then set to zero in input
 %filter_list: a list of constants used to filter the collected data
 
-num_trials=1000;
-guess_list_1=linspace(-5, 0, num_trials);
-guess_list_2=linspace(1, 5, num_trials);
-newton_guess_list=linspace(-2,2,num_trials);
+num_trials   = 1000;
+guess_list_1 = linspace(-5, 0, num_trials);
+guess_list_2 = linspace( 1, 5, num_trials);
+newton_list  = linspace(-2, 2, num_trials);  % for Newton
 
-convergence_analysis(1,test_func01, 1, guess_list_1, guess_list_2)
+% Bisection:
+%convergence_analysis(1, test_func01, 1, guess_list_1, guess_list_2);
+% Newton:
+%convergence_analysis(2, test_func01, 0, newton_list, []);
+% Secant:
+%convergence_analysis(3, test_func01, 0, guess_list_1, guess_list_2);
+
 
 
 function convergence_analysis(solver_flag, fun, x_guess0, guess_list1, guess_list2)
