@@ -60,7 +60,6 @@ function eggxample01()
         %write the frame to the video
         writeVideo(writerObj,current_frame);
     end
-    close(writerObj);
     [~, x_max_final,~,y_max_final,x_max_y_final, y_min_x_final]=find_bounding_box(position_x,position_y,new_theta,egg_params);
     
 
@@ -69,6 +68,12 @@ function eggxample01()
     else
         plot(y_min_x_final,y_max_final,'ro','markerfacecolor','r')
     end
+    drawnow;
+    %capture a frame (what is currently plotted)
+    current_frame = getframe(fig1);
+    %write the frame to the video
+    writeVideo(writerObj,current_frame);
+    close(writerObj);
 end
 
 
