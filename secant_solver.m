@@ -10,6 +10,6 @@ function x = secant_solver(fun,x0,x1)
         x1 = x2;
     end
     x = x1; 
-    disp('Iterated x1 values:');
-    disp(x1_values);
+    %disp('Iterated x1 values:');
+    %disp(x1_values);
 end

@@ -49,7 +49,7 @@ yline(0, '--k', 'LineWidth', 1, 'DisplayName','F(x)=0');
 scatter(newton_success_list, fsuccess_list, 26, 'g', 'filled', 'DisplayName','converges');
 scatter(newton_fail_list, ffail_list, 26, 'r', 'filled', 'DisplayName','fails');
 xlabel('initial guess x_0'); ylabel('f(x_0)');
-title('Newton convergence by initial guess (sigmoid)');
+title('Newton Convergence by Initial Guess');
 legend('Location','best');
 
 %fzero
@@ -62,7 +62,7 @@ yline(0, '--k', 'LineWidth', 1, 'DisplayName','F(x)=0');
 scatter(fzero_success_list, fsuccess_list, 26, 'g', 'filled', 'DisplayName','converges');
 scatter(fzero_fail_list, ffail_list, 26, 'r', 'filled', 'DisplayName','fails');
 xlabel('initial guess x_0'); ylabel('f(x_0)');
-title('fzero convergence by initial guess (sigmoid)');
+title('fzero Convergence by Initial Guess');
 legend('Location','best');
 
 %secant
@@ -72,7 +72,7 @@ yline(0, '--k', 'LineWidth', 1, 'DisplayName','F(x)=0');
 scatter(secant_success_list, secant_success_list_2, 26, 'g', 'filled', 'DisplayName','converges');
 scatter(secant_fail_list, secant_fail_list_2, 26, 'r', 'filled', 'DisplayName','fails');
 xlabel('initial guess x_0'); ylabel('f(x_0)');
-title('secant convergence by initial guess (sigmoid)');
+title('Secant Convergence by Initial Guesses');
 legend('Location','best');
 
 function [f_val,dfdx] = test_function03(x)
