@@ -21,7 +21,7 @@ function eggxample01()
     tan_vec_y = [V_single(2),V_single(2)+vector_scaling*G_single(2)];
     plot(tan_vec_x,tan_vec_y,'g')
 
-    [xmin, xmax, ymin, ymax] = find_bounding_box(x0, y0, theta, egg_params);
+    [xmin, xmax, ymin, ymax,~,~] = find_bounding_box(x0, y0, theta, egg_params);
     plot([xmin,xmax,xmax,xmin,xmin],[ymin,ymin,ymax,ymax,ymin])
 
     [tg, tw] = collision_func(@egg_trajectory01, egg_params, 0.0, 30.0);
@@ -35,7 +35,10 @@ function eggxample01()
     axis([0,30,0,30])
     %initialize the plot of the square
     egg_plot = plot(0,0,'k');
+    xline(30,"LineWidth",2)
+    yline(0,"LineWidth",2)
     %iterate through time
+    
 
     if tg<tw
         t_final=tg;
@@ -47,39 +50,64 @@ function eggxample01()
         %compute the position of the square's center (travelling along ellipse)
         [position_x, position_y,new_theta]=egg_trajectory01(t);
         [V_list, ~] = egg_func(linspace(0,1,100),position_x,position_y,new_theta,egg_params);
-        %update the coordinates of the square plot
+        %update the coordinates of the egg plot
         set(egg_plot,'xdata',V_list(1,:),'ydata',V_list(2,:));
         %update the actual plotting window
         drawnow;
     end
-    [~, x_max_final,~,y_max_final]=find_bounding_box(position_x,position_y,new_theta,egg_params);
-    if t_final==tg
-        plot(x_max_final,y_max_final)
+    [~, x_max_final,~,y_max_final,x_max_y_final, y_min_x_final]=find_bounding_box(position_x,position_y,new_theta,egg_params);
+    
+
+    if t_final==tw
+        plot(x_max_final,x_max_y_final,'ro','markerfacecolor','r')
     else
-        plot(x_max_final,y_max_final)
+        plot(y_min_x_final,y_max_final,'ro','markerfacecolor','r')
     end
 end
 
 
-function [xmin, xmax, ymin, ymax] = find_bounding_box(x0, y0, theta, egg_params)
+function [xmin, xmax, ymin, ymax, xmax_y, ymin_x] = find_bounding_box(x0, y0, theta, egg_params)
     egg_wrapper_func2_x= @(s_in)egg_wrapper_func1_x(s_in, x0, y0, theta, egg_params);
     egg_wrapper_func2_y= @(s_in)egg_wrapper_func1_y(s_in, x0, y0, theta, egg_params);
     s_guess_list = 0:0.2:1;
     dxtol=1e-14; ytol=1e-14; max_iter=200; dfdxmin = 1e-8;
     x_list=[];
+    xy_list=[];
     y_list=[];
+    yx_list=[];
     for s_guess = s_guess_list
         s_rootx=fzero(egg_wrapper_func2_x, s_guess);
         [V,~]=egg_func(s_rootx, x0, y0, theta, egg_params);
         x_list(end+1)=V(1);
+        xy_list(end+1)=V(2);
         s_rooty=fzero(egg_wrapper_func2_y, s_guess);
         [V,~]=egg_func(s_rooty, x0, y0, theta, egg_params);
         y_list(end+1)=V(2);
+        yx_list(end+1)=V(1);
     end
-    xmin=min(x_list);
-    xmax=max(x_list);
-    ymin=min(y_list);
-    ymax=max(y_list);
+
+    xmin=100;
+    xmax=0;
+    ymin=100;
+    ymax=0;
+    for i = 1:length(x_list)
+        if x_list(i)<xmin
+            xmin=x_list(i);
+        end
+        if x_list(i)>xmax
+            xmax=x_list(i);
+            xmax_y=xy_list(i);
+        end
+    end
+    for i = 1:length(y_list)
+        if y_list(i)<ymin
+            ymin=y_list(i);
+            ymin_x=yx_list(i);
+        end
+        if y_list(i)>ymax
+            ymax=y_list(i);
+        end
+    end
 end
 
 function Gx = egg_wrapper_func1_x(s, x0, y0, theta, egg_params)
