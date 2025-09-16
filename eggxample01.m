@@ -27,9 +27,12 @@ function eggxample01()
     [tg, tw] = collision_func(@egg_trajectory01, egg_params, 0.0, 30.0);
     %fprintf('t_ground = %.4f, t_wall = %.4f\n', tg, tw);
 
-    %Short example demonstrating how to create a MATLAB animation
-    %In this case, a square moving along an elliptical path
-    %Define the coordinates of the square vertices (in its own frame)
+    mypath1 = 'C:\Users\jvidaurrazaga\OneDrive - Olin College of Engineering\Documents\GitHub\Applied-Math-Assignment-1-Team-12\';
+    fname='egg_animation.avi';
+    input_fname = [mypath1,fname];
+    writerObj = VideoWriter(input_fname);
+    open(writerObj);
+    fig1 = figure(1);
     %set up the plotting axis
     hold on; axis equal; axis square
     axis([0,30,0,30])
@@ -37,9 +40,7 @@ function eggxample01()
     egg_plot = plot(0,0,'k');
     xline(30,"LineWidth",2)
     yline(0,"LineWidth",2)
-    %iterate through time
-    
-
+   
     if tg<tw
         t_final=tg;
     else
@@ -54,7 +55,12 @@ function eggxample01()
         set(egg_plot,'xdata',V_list(1,:),'ydata',V_list(2,:));
         %update the actual plotting window
         drawnow;
+        %capture a frame (what is currently plotted)
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
     end
+    close(writerObj);
     [~, x_max_final,~,y_max_final,x_max_y_final, y_min_x_final]=find_bounding_box(position_x,position_y,new_theta,egg_params);
     
 

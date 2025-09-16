@@ -1,10 +1,9 @@
-%Short example demonstrating how to create a MATLAB animation
-%In this case, a square moving along an elliptical path
 %This version also store the animation in a vide.
 function video_example()
 %define location and filename where video will be stored
 %written a bit weird to make it fit when viewed in assignment
-mypath1 = 'C:\Users\jvidaurrazaga\OneDrive - Olin College of Engineering\Documents\Github\Applied-Math-Assignment-1-Team-12';
+mypath1 = 'C:\Users\jvidaurrazaga\OneDrive - Olin College of Engineering\Documents\GitHub\Applied-Math-Assignment-1-Team-12\';
+%mypath2 = 'AppliedMathForEngineers\Modules\Strandbeest\graphics\';
 fname='square_animation.avi';
 input_fname = [mypath1,fname];
 %create a videowriter, which will write frames to the animation file
