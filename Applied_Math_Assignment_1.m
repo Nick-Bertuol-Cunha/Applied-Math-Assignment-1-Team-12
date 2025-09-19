@@ -2,8 +2,9 @@
 close all;
 clear all;
 mmAss1
+
 function mmAss1()
-day01();
+%day01();
 %day02();
 fn =(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) - 0.7 - exp(x/6));
 flist = [1e-15,1e-2,1e-14,1e-2,2]
@@ -304,8 +305,13 @@ end
 
 size(x_regression)
 size(y_regression)
+hold on;
 figure;
 loglog(x_regression,y_regression,'ro','markerfacecolor','r','markersize',1)
+legend(["data1", "   linear"], "Position", [0.7841 0.1830 0.0853, 0.0471])
+title("Bisection Fit")
+xlabel("ε_n", "FontSize", 11, "FontAngle", "normal", "FontWeight", "bold")
+ylabel("ε_n_+_1")
 
 Y = log(y_regression)';
 X1 = log(x_regression)';
@@ -321,8 +327,15 @@ xx = logspace(log10(min(x_regression)), log10(max(x_regression)), 200);
 
 yy = k .* xx.^p;
 
-figure;                         
+figure;
 loglog(xx, yy, '-', 'LineWidth', 2);
+
+hold on;
+loglog(x_regression,y_regression,'ro','markerfacecolor','r','markersize',2)
+legend(["data1", "   linear"], "Position", [0.7841 0.1830 0.0853, 0.0471])
+title("Bisection Fit")
+xlabel("ε_n", "FontSize", 15, "FontAngle", "normal", "FontWeight", "bold")
+ylabel("ε_n_+_1","FontSize", 15)
 
 function [dfdx,d2fdx2] = approximate_derivative(fun,x)
     delta_x = 1e-6;
