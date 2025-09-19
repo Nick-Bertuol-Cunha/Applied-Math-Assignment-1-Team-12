@@ -71,7 +71,7 @@ plot(x_in, x_in_2, 'k-', 'LineWidth', 1, 'DisplayName','Test Function 3');
 yline(0, '--k', 'LineWidth', 1, 'DisplayName','F(x)=0');
 scatter(secant_success_list, secant_success_list_2, 26, 'g', 'filled', 'DisplayName','converges');
 scatter(secant_fail_list, secant_fail_list_2, 26, 'r', 'filled', 'DisplayName','fails');
-xlabel('initial guess x_0'); ylabel('f(x_0)');
+xlabel('initial guess x_0'); ylabel('initial guess x_1');
 title('Secant Convergence by Initial Guesses');
 legend('Location','best');
 

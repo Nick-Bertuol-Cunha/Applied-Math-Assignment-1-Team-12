@@ -1,11 +1,12 @@
 function eggxample01()
+    figure(1);
     egg_params = struct();
     egg_params.a = 3; egg_params.b = 2; egg_params.c = .15;
     x0 = 5; y0 = 5; theta = pi/6;
     hold on; axis equal; axis square
     axis([0,10,0,10])
     %plot the origin of the egg frame
-    plot(x0,y0,'ro','markerfacecolor','r');
+    %plot(x0,y0,'ro','markerfacecolor','r');
     %compute the perimeter of the egg
     [V_list, ~] = egg_func(linspace(0,1,100),x0,y0,theta,egg_params);
     %plot the perimeter of the egg
@@ -20,9 +21,8 @@ function eggxample01()
     tan_vec_x = [V_single(1),V_single(1)+vector_scaling*G_single(1)];
     tan_vec_y = [V_single(2),V_single(2)+vector_scaling*G_single(2)];
     plot(tan_vec_x,tan_vec_y,'g')
-
     [xmin, xmax, ymin, ymax,~,~] = find_bounding_box(x0, y0, theta, egg_params);
-    plot([xmin,xmax,xmax,xmin,xmin],[ymin,ymin,ymax,ymax,ymin])
+    plot([xmin,xmax,xmax,xmin,xmin],[ymin,ymin,ymax,ymax,ymin])  
 
     [tg, tw] = collision_func(@egg_trajectory01, egg_params, 0.0, 30.0);
     %fprintf('t_ground = %.4f, t_wall = %.4f\n', tg, tw);
@@ -32,7 +32,7 @@ function eggxample01()
     input_fname = [mypath1,fname];
     writerObj = VideoWriter(input_fname);
     open(writerObj);
-    fig1 = figure(1);
+    fig1 = figure(2);
     %set up the plotting axis
     hold on; axis equal; axis square
     axis([0,30,0,30])
@@ -61,7 +61,6 @@ function eggxample01()
         writeVideo(writerObj,current_frame);
     end
     [~, x_max_final,~,y_max_final,x_max_y_final, y_min_x_final]=find_bounding_box(position_x,position_y,new_theta,egg_params);
-    
 
     if t_final==tw
         plot(x_max_final,x_max_y_final,'ro','markerfacecolor','r')
@@ -72,7 +71,9 @@ function eggxample01()
     %capture a frame (what is currently plotted)
     current_frame = getframe(fig1);
     %write the frame to the video
-    writeVideo(writerObj,current_frame);
+    for n = 1:10
+        writeVideo(writerObj,current_frame);
+    end
     close(writerObj);
 end
 
