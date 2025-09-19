@@ -1,13 +1,15 @@
 
+close all;
+clear all;
 mmAss1
 function mmAss1()
-%day01();
+day01();
 %day02();
 fn =(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) - 0.7 - exp(x/6));
 flist = [1e-15,1e-2,1e-14,1e-2,2]
-glist1 = linspace(-5, 5, 10);
-glist2 = linspace(-5, 5, 10)+.01;
-convergence_analysis(3,@orion_test_func,0,glist1,glist2,flist)
+glist1 = linspace(-5, 0, 100);
+glist2 = linspace(1, 6, 100);
+convergence_analysis(4,@orion_test_func,0,glist1,glist2,flist)
 
 end
 
@@ -26,9 +28,9 @@ y = 0;
 
 fx = test_func01(x);
 
-%plot(x, fx)
-%grid on;
-%yline(0, '--k', 'LineWidth', 1);
+plot(x, fx)
+grid on;
+yline(0, '--k', 'LineWidth', 1);
 
 %bisection()
 %newton()
@@ -263,7 +265,7 @@ for t = 1:numel(x0_list)
     catch
         continue
     end
-
+disp(x_star)
     xs = rec.get_input_list();                          
     if numel(xs) < 2, continue; end
 

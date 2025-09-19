@@ -1,28 +1,20 @@
 function x = bisection_solver(fun,x_left,x_right)
     func = fun;
-    
+    interval = [x_left,x_right];
     c_values = [];
 
    
-    
+    fc = func(c);
         a = x_left;
         b = x_right;
         c = (a+b)/2;
-        fc = func(c);
     while abs(fc) > 0.001
         
        
-        fa = func(a);
-        fb = func(b);
+        fa = func(interval(1,1));
+        fb = func(interval(1,2));
         fc = func(c);
-        % disp(fc)
-        % disp(fa)
-        % disp(fb)
-        disp(a)
-        disp(b)
-        disp(c)
-        %disp(fa * fc)
-        %disp(fb * fc)
+        disp(fc)
         
         c_values = [c_values, c]; % Save the current c value
 
@@ -30,22 +22,25 @@ function x = bisection_solver(fun,x_left,x_right)
         % disp(interval)
 
         if fa * fc < 0
-            disp(6)
             % f(a) and f(c) have opposite signs
             
             b = c;
             c = (a+c)/2;
        
-        elseif fb * fc < 0
+        else
+            % f(a) and f(c) have same signs
+            if fb * fc < 0
                 % f(b) and f(c) have opposite signs
-                disp(8)
+                interval = [c,interval(1,2)];
                 a = c;
                 c = (b+c)/2;
 
-            
+            else
+                % f(b) and f(c) have same signs
+            end
         end
     end
     x = c;
-   %disp('Iterated c values:'); 
+   % disp('Iterated c values:'); 
     %disp(c_values);
 end

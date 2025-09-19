@@ -1,12 +1,15 @@
 
+close all;
+clear all;
 mmAss1
 function mmAss1()
-%day01();
+day01();
 %day02();
+fn =(@(x) (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) - 0.7 - exp(x/6));
 flist = [1e-15,1e-2,1e-14,1e-2,2]
-glist1 = linspace(30 - 2, 30 + 2, 100);
-glist2 = linspace(30 - 2, 30 + 2, 100)+.01;
-convergence_analysis(3,@orion_test_func,30,glist1,glist2,flist)
+glist1 = linspace(-5, 0, 100);
+glist2 = linspace(1, 6, 100);
+convergence_analysis(2,@orion_test_func,0,glist1,glist2,flist)
 
 end
 
@@ -25,9 +28,9 @@ y = 0;
 
 fx = test_func01(x);
 
-%plot(x, fx)
-%grid on;
-%yline(0, '--k', 'LineWidth', 1);
+plot(x, fx)
+grid on;
+yline(0, '--k', 'LineWidth', 1);
 
 %bisection()
 %newton()
@@ -262,7 +265,7 @@ for t = 1:numel(x0_list)
     catch
         continue
     end
-
+disp(x_star)
     xs = rec.get_input_list();                          
     if numel(xs) < 2, continue; end
 
@@ -284,6 +287,9 @@ err_np1=abs(xnp1_all-x_root);
 figure;
 loglog(err_n,err_np1,'ro','markerfacecolor','r','markersize',1)
 
+size(err_n)
+size(err_np1)
+
 x_regression=[];
 y_regression=[];
 for n=1:length(trial_id)
@@ -293,8 +299,11 @@ for n=1:length(trial_id)
         x_regression(end+1) = err_n(n);
         y_regression(end+1) = err_np1(n);
     end
+    n=n+1;
 end
 
+size(x_regression)
+size(y_regression)
 figure;
 loglog(x_regression,y_regression,'ro','markerfacecolor','r','markersize',1)
 
